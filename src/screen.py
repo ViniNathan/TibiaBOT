@@ -129,8 +129,10 @@ def LocateImageCenter(image, window_name, Region=None, Precision=0.8):
             y += Region[1]
         return x, y
 
-    # Caso nenhum template seja encontrado, retornar (0, 0)
-    return 0, 0
+    # Caso nenhum template seja encontrado, retornar None
+    return None
+
+
 
 # Localiza todas as coordenadas do canto superior esquerdo das imagens compatíveis com o template
 def LocateAllImages(image, window_name, Region=None, Precision=0.8):
@@ -164,3 +166,27 @@ def LocateAllImages(image, window_name, Region=None, Precision=0.8):
             break
 
     return template_count
+
+# Localiza as coordenadas centro da imagem com base numa região passada
+def locate_image_center_in_region(template_path, window_name, region):
+    # Captura a região da tela especificada
+    window_capture = WindowCapture(window_name)
+    screenshot = window_capture.capture()
+
+    # Define a região de busca
+    x, y, width, height = region
+    search_region = screenshot[y:y+height, x:x+width]
+
+    # Realiza a correspondência do template na região de busca
+    template_matcher = TemplateMatcher(template_path)
+    template_location = template_matcher.find_template(search_region)
+
+    if template_location is not None:
+        # Obtém as coordenadas do centro da imagem na região de busca
+        template_x, template_y = template_location
+        center_x = x + template_x + width // 2
+        center_y = y + template_y + height // 2
+        return center_x, center_y
+
+    # Caso o template não seja encontrado, retorna None
+    return None
