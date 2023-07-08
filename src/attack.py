@@ -1,6 +1,7 @@
-from screen import WindowCapture, TemplateMatcher
+from src.screen import WindowCapture, TemplateMatcher
 import pyautogui
 import json
+
 
 class AttackClick:
     def __init__(self):
@@ -32,11 +33,11 @@ class AttackClick:
                     print("O template foi encontrado na posição:", template_location)
                     pyautogui.moveTo(template_location)
                     pyautogui.leftClick()
+                    pyautogui.moveTo(1056, 58)
                     break  # Parar a iteração caso o template seja encontrado
                     
             else:
                 print("Nenhum template encontrado na tela para os monstros especificados.")
-                pyautogui.moveTo(960, 540)
         else:
             print("Nenhum monstro encontrado no arquivo:", monsters_file)
 
