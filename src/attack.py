@@ -1,4 +1,4 @@
-from locateOnScreen import WindowCapture, TemplateMatcher
+from screen import WindowCapture, TemplateMatcher
 import pyautogui
 import json
 
