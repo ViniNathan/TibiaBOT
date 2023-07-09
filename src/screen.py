@@ -3,6 +3,7 @@ import numpy as np
 from ctypes import windll
 import win32gui
 import win32ui
+import pyautogui
 
 class WindowCapture:
     def __init__(self, window_name):
@@ -39,8 +40,32 @@ class WindowCapture:
             raise RuntimeError(f"Não foi possível obter a captura da tela! Resultado: {result}")
 
         return img
+    
+    def capture_mouse_region(self):
+        # Define o tamanho da região ao redor do mouse
+        region_size = 7
 
-# Localiza uma imagem compativel com um "template" salvo
+        # Obtém a posição atual do mouse
+        mouse_x, mouse_y = pyautogui.position()
+
+        # Obtém as coordenadas da janela capturada
+        hwnd = win32gui.FindWindow(None, self.window_name)
+        left, top, _, _ = win32gui.GetClientRect(hwnd)
+
+        # Calcula as coordenadas da região ao redor do mouse na janela capturada
+        capture_x1 = mouse_x - region_size - left
+        capture_x2 = mouse_x + region_size - left
+        capture_y1 = mouse_y - region_size - top
+        capture_y2 = mouse_y + region_size - top
+
+        # Captura a região onde o mouse está posicionado
+        screenshot = self.capture()
+        mouse_region = screenshot[capture_y1:capture_y2, capture_x1:capture_x2]
+        return mouse_region
+
+
+
+# Localiza as coordenadas do centro de uma imagem compativel com um "template" salvo
 class TemplateMatcher:
     def __init__(self, template_path):
         self.template_path = template_path
@@ -58,6 +83,9 @@ class TemplateMatcher:
         else:
             return None
         
+
+
+# Localiza as coordenadas do canto superior esquerdo de uma imagem compativel com um "template" salvo
 class TemplateSupMatcher:
     def __init__(self, template_path):
         self.template_path = template_path

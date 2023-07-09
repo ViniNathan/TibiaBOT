@@ -1,0 +1,56 @@
+from pynput.keyboard import Listener
+from pynput import keyboard
+from screen import *
+import time
+import json
+
+Hunt_Name = "HUNT-Teste"
+
+class Rec:
+
+    def __init__(self):
+        self.count = 0
+        self.coordinates = []
+
+    def photo (self):
+        window_name = "Projetor em tela cheia (prévia)"
+        window = WindowCapture(window_name)
+        screen = WindowCapture.capture_mouse_region(window)
+        save_path = "images/CaveBot/{1}/flag_{0}.png".format(self.count, Hunt_Name)
+        cv2.imwrite(save_path, screen)
+        self.count += 1
+        infos = {
+            "path": save_path,
+            "wait": 0,
+            "start": None
+        }
+        self.coordinates.append(infos)
+        print(infos)
+
+    def tick (self):
+        last_coordinates = self.coordinates[-1]
+        if last_coordinates["start"] == None:
+            last_coordinates["start"] = time.time()
+        else:
+            last_coordinates["wait"] = time.time() - last_coordinates["start"]
+            del last_coordinates["start"]
+
+
+    def key_code(self, key):
+        print(key)
+        if key == keyboard.Key.esc:
+            with open("scripts/CaveBot/{0}.json".format(Hunt_Name), "w") as file:
+                file.write(json.dumps(self.coordinates))
+            return False
+        if key == keyboard.Key.insert:
+            self.photo()
+        if key == keyboard.Key.page_up:
+            self.tick()
+        
+
+    def start (self):
+        with Listener(on_press= self.key_code) as listener:
+            listener.join()
+
+record = Rec()
+record.start()

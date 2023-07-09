@@ -22,7 +22,7 @@ class AttackClick:
             for monster_name in monster_names:
                 # Compor o caminho do template para o nome atual
                 template_path = template_folder + monster_name + ".png"
-
+                
                 window_capture = WindowCapture(window_name)
                 template_matcher = TemplateMatcher(template_path)
 
@@ -40,7 +40,3 @@ class AttackClick:
                 print("Nenhum template encontrado na tela para os monstros especificados.")
         else:
             print("Nenhum monstro encontrado no arquivo:", monsters_file)
-
-while True:
-    atacar = AttackClick()
-    atacar.attack()
